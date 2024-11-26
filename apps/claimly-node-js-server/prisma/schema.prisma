@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Customer {
+  claims    Claim[]
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Claim {
+  amount        Float?
+  claimStatus   ClaimStatus? @relation(fields: [claimStatusId], references: [id])
+  claimStatusId String?
+  createdAt     DateTime     @default(now())
+  customer      Customer?    @relation(fields: [customerId], references: [id])
+  customerId    String?
+  date          DateTime?
+  description   String?
+  id            String       @id @default(cuid())
+  updatedAt     DateTime     @updatedAt
+}
+
+model ClaimStatus {
+  claims    Claim[]
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  status    String?
+  updatedAt DateTime @updatedAt
+}
